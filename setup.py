@@ -18,9 +18,9 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/yourusername/pyrate",  # TODO: Replace with actual repo URL
     project_urls={
-        "Bug Tracker": "https://github.com/yourusername/pyrate/issues",
-        "Documentation": "https://github.com/yourusername/pyrate#readme",
-        "Source Code": "https://github.com/yourusername/pyrate",
+        "Bug Tracker": "https://github.com/rockefeller2021/PyRateFrameworkTest/issues",
+        "Documentation": "https://github.com/rockefeller2021/PyRateFrameworkTest/blob/develop/README_ES.md",
+        "Source Code": "https://github.com/rockefeller2021/PyRateFrameworkTest",
     },
     packages=find_packages(exclude=["tests*", "build*"]),
     classifiers=[
