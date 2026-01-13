@@ -320,7 +320,9 @@ class PyRateRunner:
 
         elif match := re.match(r'(?:Given|And)\s+path\s+(.*)', line, re.IGNORECASE):
             base = self.context['base_url'].rstrip('/')
-            self.context['base_url'] = f"{base}/{match.group(1).strip("'").strip('"').lstrip('/')}"
+            # Python 3.8+ compatible - extract value outside f-string
+            path_value = match.group(1).strip("'").strip('"').lstrip('/')
+            self.context['base_url'] = f"{base}/{path_value}"
 
         elif match := re.match(r'(?:Given|And)\s+header\s+(.*) = (.*)', line, re.IGNORECASE):
             self.context['headers'][match.group(1).strip("'").strip('"')] = match.group(2).strip("'").strip('"')
