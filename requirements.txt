@@ -1,0 +1,7 @@
+requests
+playwright
+colorama
+python-dotenv
+pandas
+openpyxl
+jinja2

@@ -1,0 +1,32 @@
+# PyRate Framework Configuration Example
+# ==========================================
+# Copy this file to 'pyrate.config.yaml' and customize as needed
+
+pyrate:
+  # Evidence generation settings
+  evidence:
+    folder: "evidence"              # Where to store evidence files
+    screenshot_on_pass: true        # Capture screenshots on successful UI steps
+    screenshot_on_fail: true        # Capture screenshots on failed steps
+  
+  # Report generation settings
+  reports:
+    folder: "reports"               # Where to store HTML reports
+  
+  # Browser automation settings (Playwright)
+  browser:
+    headless: false                 # Run browser in headless mode (true for CI)
+    timeout: 30000                  # Timeout for browser operations (milliseconds)
+  
+  # API testing settings
+  api:
+    timeout: 30                     # Timeout for HTTP requests (seconds)
+    verify_ssl: true                # Verify SSL certificates
+    retry_attempts: 3               # Number of retry attempts for failed requests
+    retry_delay: 1.0                # Delay between retries (seconds)
+    user_agent: "PyRate/1.0"        # Custom User-Agent header
+  
+  # Logging settings
+  logging:
+    verbose: false                  # Enable verbose logging
+    max_response_size: 500          # Maximum response data to log (characters)
