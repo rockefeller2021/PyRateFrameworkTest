@@ -312,7 +312,9 @@ class PyRateRunner:
             self.context['auth'] = HTTPBasicAuth(match.group(1).strip("'").strip('"'),
                                                  match.group(2).strip("'").strip('"'))
         elif match := re.match(r'(?:Given|And)\s+auth bearer (.*)', line, re.IGNORECASE):
-            self.context['headers']['Authorization'] = f"Bearer {match.group(1).strip("'").strip('"')}"
+            # Python 3.8+ compatible
+            token = match.group(1).strip("'").strip('"')
+            self.context['headers']['Authorization'] = f"Bearer {token}"
 
         # 4. API Requests
         elif match := re.match(r'Given url (.*)', line, re.IGNORECASE):
@@ -325,7 +327,10 @@ class PyRateRunner:
             self.context['base_url'] = f"{base}/{path_value}"
 
         elif match := re.match(r'(?:Given|And)\s+header\s+(.*) = (.*)', line, re.IGNORECASE):
-            self.context['headers'][match.group(1).strip("'").strip('"')] = match.group(2).strip("'").strip('"')
+            # Python 3.8+ compatible
+            header_name = match.group(1).strip("'").strip('"')
+            header_value = match.group(2).strip("'").strip('"')
+            self.context['headers'][header_name] = header_value
 
         elif match := re.match(r'(?:Given|And)\s+request\s+(.*)', line, re.IGNORECASE):
             raw = match.group(1).strip()
