@@ -10,13 +10,13 @@ except FileNotFoundError:
 
 setup(
     name="pyrate-framework",  # Unique name for PyPI
-    version="1.0.1",
+    version="1.0.2",
     author="Rafael Enrique Alvarado García",  # TODO: Replace with actual author name
     author_email="magomlg@gmail.com",  # TODO: Replace with actual email
     description="Automation testing framework for API and UI inspired by Karate Framework",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/pyrate",  # TODO: Replace with actual repo URL
+    url="https://github.com/rockefeller2021/PyRateFrameworkTest",
     project_urls={
         "Bug Tracker": "https://github.com/rockefeller2021/PyRateFrameworkTest/issues",
         "Documentation": "https://github.com/rockefeller2021/PyRateFrameworkTest/blob/develop/README_ES.md",

@@ -33,7 +33,7 @@ def main():
     parser.add_argument(
         '-v', '--version', 
         action='version', 
-        version='PyRate Framework 1.0.1'
+        version='PyRate Framework 1.0.2'
     )
     
     subparsers = parser.add_subparsers(dest="command")
@@ -50,6 +50,11 @@ def main():
     )
 
     args = parser.parse_args()
+
+    # Show help if no command is provided
+    if args.command is None:
+        parser.print_help()
+        sys.exit(0)
 
     if args.command == "init":
         init_project()

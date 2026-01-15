@@ -2,6 +2,8 @@
 
 **English | [Español](README_ES.md)**
 
+[![PyPI version](https://img.shields.io/pypi/v/pyrate-framework.svg)](https://pypi.org/project/pyrate-framework/)
+[![PyPI downloads](https://img.shields.io/pypi/dm/pyrate-framework.svg)](https://pypi.org/project/pyrate-framework/)
 [![Python Versions](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-blue)](https://www.python.org/downloads/)
 [![CI/CD](https://github.com/rockefeller2021/PyRateFrameworkTest/actions/workflows/ci.yml/badge.svg)](https://github.com/rockefeller2021/PyRateFrameworkTest/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -455,9 +457,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📧 Contact
 
-- **Author**: Your Name
-- **Email**: your.email@example.com
-- **GitHub**: [@yourusername](https://github.com/yourusername)
+- **Author**: Rafael Enrique Alvarado García
+- **Email**: magomlg@gmail.com
+- **GitHub**: [@rockefeller2021](https://github.com/rockefeller2021)
+- **PyPI**: [pyrate-framework](https://pypi.org/project/pyrate-framework/)
 
 ---
 

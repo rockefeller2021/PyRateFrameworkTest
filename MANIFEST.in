@@ -1,0 +1,27 @@
+# Include documentation files
+include README.md
+include README_ES.md
+include CHANGELOG.md
+include CONTRIBUTING.md
+include TESTING.md
+include LICENSE
+
+# Include configuration examples
+include pyrate.config.yaml.example
+
+# Include examples
+recursive-include examples *.feature *.csv *.json *.md
+
+# Exclude development and build files
+exclude .gitattributes
+exclude .gitignore
+recursive-exclude tests *
+recursive-exclude .github *
+recursive-exclude evidence *
+recursive-exclude reports *
+recursive-exclude dist *
+recursive-exclude build *
+recursive-exclude *.egg-info *
+recursive-exclude __pycache__ *
+recursive-exclude .pytest_cache *
+recursive-exclude .venv *

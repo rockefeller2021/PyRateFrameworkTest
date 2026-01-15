@@ -7,6 +7,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.2] - 2026-01-14
+
+### 🔧 Fixed
+
+- **CLI Entry Point**: Added `__main__.py` to enable `python -m pyrate` execution pattern
+- **Argument Parsing**: Fixed CLI to properly handle `--version` flag and show help when no subcommand is provided
+- **Metadata**: Corrected repository URLs in `setup.py` from placeholder to actual GitHub repository
+- **Author Information**: Updated author metadata in `__init__.py` with correct name and documentation links
+
+### 📦 Package Distribution
+
+- **MANIFEST.in**: Created manifest file to ensure documentation, examples, and license files are included in PyPI distribution
+- **Automated Publishing**: Added GitHub Actions workflow for automatic PyPI publishing using Trusted Publishers (OIDC)
+
+### 📚 Documentation
+
+- **PyPI Badges**: Added PyPI version and download badges to README
+- **Contact Information**: Updated README with actual author contact details
+- **Repository Links**: Fixed all GitHub repository URLs across documentation
+
+### ⚡ Improvements
+
+- Better CLI user experience with helpful error messages
+- Enhanced package metadata for PyPI discoverability
+- Professional GitHub Actions CI/CD pipeline for releases
+
+---
+
+## [1.0.1] - 2026-01-14
+
+### 🚀 TestPyPI Release
+
+- Successfully published to TestPyPI for validation
+- Initial public release testing
+
+---
+
 ## [1.0.0] - 2026-01-13
 
 ### 🎉 First Stable Release

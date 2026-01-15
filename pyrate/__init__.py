@@ -21,11 +21,11 @@ Example:
     >>> runner.execute_file("tests/features/login.feature")
 
 Documentation:
-    https://github.com/yourusername/pyrate
+    https://github.com/rockefeller2021/PyRateFrameworkTest
 """
 
-__version__ = "1.0.1"
-__author__ = "Your Name"
+__version__ = "1.0.2"
+__author__ = "Rafael Enrique Alvarado García"
 __license__ = "MIT"
 __title__ = "PyRate Framework"
 __description__ = "Automation testing framework for API and UI inspired by Karate"
