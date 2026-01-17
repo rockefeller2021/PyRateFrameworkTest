@@ -17,6 +17,7 @@ from .report_generator import generate_report
 from .evidence import EvidenceGenerator
 from .config import PyRateConfig
 from .validators import is_valid_url
+from .selectors import SelectorStrategy, SelectorType
 
 
 class PyRateRunner:
@@ -412,13 +413,41 @@ class PyRateRunner:
             self.context['page'].goto(url, timeout=self.config.browser_timeout)
 
         elif match := re.match(r'(?:Given|And)\s+input (.*) (.*)', line, re.IGNORECASE):
-            self.context['page'].fill(match.group(1).strip("'").strip('"'), match.group(2).strip("'").strip('"'))
+            selector_raw = match.group(1).strip("'").strip('"')
+            value = match.group(2).strip("'").strip('"')
+            
+            # Parse selector (CSS or XPath)
+            selector_type, selector = SelectorStrategy.parse(selector_raw)
+            
+            if selector_type == SelectorType.XPATH:
+                self.context['page'].locator(f"xpath={selector}").fill(value)
+            else:
+                self.context['page'].fill(selector, value)
         elif match := re.match(r'(?:Given|And)\s+click (.*)', line, re.IGNORECASE):
-            self.context['page'].click(match.group(1).strip("'").strip('"'))
+            selector_raw = match.group(1).strip("'").strip('"')
+            
+            # Parse selector (CSS or XPath)
+            selector_type, selector = SelectorStrategy.parse(selector_raw)
+            
+            if selector_type == SelectorType.XPATH:
+                self.context['page'].locator(f"xpath={selector}").click()
+            else:
+                self.context['page'].click(selector)
         elif match := re.match(r'(?:Given|And)\s+wait (\d+)', line, re.IGNORECASE):
             time.sleep(int(match.group(1)))
         elif match := re.match(r'(?:Then|And)\s+match text (.*) == (.*)', line, re.IGNORECASE):
-            act = self.context['page'].inner_text(match.group(1).strip("'").strip('"'))
-            if match.group(2).strip("'").strip('"') not in act: raise AssertionError(f"Texto no coincide")
+            selector_raw = match.group(1).strip("'").strip('"')
+            expected_text = match.group(2).strip("'").strip('"')
+            
+            # Parse selector (CSS or XPath)
+            selector_type, selector = SelectorStrategy.parse(selector_raw)
+            
+            if selector_type == SelectorType.XPATH:
+                act = self.context['page'].locator(f"xpath={selector}").inner_text()
+            else:
+                act = self.context['page'].inner_text(selector)
+            
+            if expected_text not in act:
+                raise AssertionError(f"Texto no coincide. Esperado: '{expected_text}' en '{act}'")
         else:
             raise StepExecutionError(line, "Comando desconocido")

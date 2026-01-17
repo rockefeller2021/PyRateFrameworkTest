@@ -248,9 +248,88 @@ pyrate:
 
 PyRate carga la configuración en este orden (lo posterior sobreescribe lo anterior):
 
-1. **Valores por defecto** (en `pyrate/config.py`)
-2. **`pyrate.config.yaml`** en directorio actual (auto-detectado)
-3. **Archivo personalizado** vía flag `-c/--config` (máxima prioridad)
+1. **Configuración por defecto** (en `pyrate/config.py`)
+2. **Archivo `pyrate.config.yaml`** en el directorio actual (auto-detectado)
+3. **Variables de entorno** (si están presentes)
+4. **Archivo de configuración** especificado con la bandera `-c` (mayor prioridad)
+
+---
+
+## 🎯 Selectores UI
+
+PyRate soporta tanto **selectores CSS** como **expresiones XPath** para automatización UI. El framework detecta automáticamente qué tipo estás usando.
+
+### Selectores CSS (Por Defecto)
+
+Usa selectores CSS estándar para la mayoría de interacciones UI:
+
+```gherkin
+# Por ID
+And input '#username' 'john_doe'
+
+# Por clase
+And click '.btn-primary'
+
+# Por atributo
+And input 'input[name="email"]' 'john@example.com'
+
+# Selectores complejos
+And click 'button[type="submit"].login-btn'
+```
+
+### Selectores XPath
+
+Para navegación DOM compleja o elementos dinámicos, usa XPath:
+
+#### Opción 1: Prefijo Explícito
+
+```gherkin
+# Con prefijo xpath=
+And input 'xpath=//input[@id="username"]' 'john_doe'
+And click 'xpath=//button[@type="submit"]'
+Then match text 'xpath=//h1[@class="welcome"]' == 'Bienvenido'
+```
+
+#### Opción 2: Auto-Detección
+
+```gherkin
+# XPath que empieza con // o / se detecta automáticamente
+And input '//input[@id="username"]' 'john_doe'
+And click '//button[text()="Iniciar Sesión"]'
+Then match text '//h1' == 'Bienvenido'
+```
+
+### Ejemplos Avanzados de XPath
+
+```gherkin
+# Contiene texto
+And click '//button[contains(text(), "Enviar")]'
+
+# Por atributos data (recomendado para testing)
+And input '//input[@data-testid="username-field"]' 'admin'
+
+# Navegar jerarquía
+And input '//form[@name="login"]//input[@type="password"]' 'secreto'
+
+# Múltiples condiciones
+And click '//button[@type="submit" and contains(@class, "primary")]'
+
+# Por índice
+And input '(//input[@type="text"])[2]' 'segundo-input'
+```
+
+### Mezclando CSS y XPath
+
+Puedes usar ambos en el mismo test:
+
+```gherkin
+And input '#username' 'admin'  # CSS
+And input '//input[@id="password"]' 'pass123'  # XPath
+And click '.submit-btn'  # CSS
+Then match text '//div[@class="message"]' == 'Éxito'  # XPath
+```
+
+---
 
 Ejemplo:
 

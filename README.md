@@ -249,7 +249,86 @@ PyRate loads configuration in this order (later overrides earlier):
 
 1. **Built-in defaults** (in `pyrate/config.py`)
 2. **`pyrate.config.yaml`** in current directory (auto-detected)
-3. **Custom file** via `-c/--config` flag (highest priority)
+3. **Environment variables** (if present)
+4. **Config file** specified with `-c` flag (highest priority)
+
+---
+
+## 🎯 UI Selectors
+
+PyRate supports both **CSS selectors** and **XPath expressions** for UI automation. The framework automatically detects which type you're using.
+
+### CSS Selectors (Default)
+
+Use standard CSS selectors for most UI interactions:
+
+```gherkin
+# By ID
+And input '#username' 'john_doe'
+
+# By class
+And click '.btn-primary'
+
+# By attribute
+And input 'input[name="email"]' 'john@example.com'
+
+# Complex selectors
+And click 'button[type="submit"].login-btn'
+```
+
+### XPath Selectors
+
+For complex DOM navigation or dynamic elements, use XPath:
+
+#### Option 1: Explicit Prefix
+
+```gherkin
+# With xpath= prefix
+And input 'xpath=//input[@id="username"]' 'john_doe'
+And click 'xpath=//button[@type="submit"]'
+Then match text 'xpath=//h1[@class="welcome"]' == 'Welcome'
+```
+
+#### Option 2: Auto-Detection
+
+```gherkin
+# XPath starting with // or / is auto-detected
+And input '//input[@id="username"]' 'john_doe'
+And click '//button[text()="Login"]'
+Then match text '//h1' == 'Welcome'
+```
+
+### Advanced XPath Examples
+
+```gherkin
+# Contains text
+And click '//button[contains(text(), "Submit")]'
+
+# By data attributes (recommended for testing)
+And input '//input[@data-testid="username-field"]' 'admin'
+
+# Navigate hierarchy
+And input '//form[@name="login"]//input[@type="password"]' 'secret'
+
+# Multiple conditions
+And click '//button[@type="submit" and contains(@class, "primary")]'
+
+# By index
+And input '(//input[@type="text"])[2]' 'second-input'
+```
+
+### Mixing CSS and XPath
+
+You can use both in the same test:
+
+```gherkin
+And input '#username' 'admin'  # CSS
+And input '//input[@id="password"]' 'pass123'  # XPath
+And click '.submit-btn'  # CSS
+Then match text '//div[@class="message"]' == 'Success'  # XPath
+```
+
+---
 
 Example:
 
