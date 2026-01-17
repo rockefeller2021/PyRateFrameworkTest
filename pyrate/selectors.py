@@ -114,12 +114,9 @@ class SelectorStrategy:
                 ...
             ValueError: Invalid XPath: must start with / or //
         """
-        # CSS validation (check first for specific error message)
-        if selector_type == SelectorType.CSS:
-            if not selector or selector.isspace():
-                raise ValueError("Empty CSS selector")
+        if not selector:
+            raise ValueError("Selector cannot be empty")
         
-        # XPath validation
         if selector_type == SelectorType.XPATH:
             if not selector:
                 raise ValueError("Selector cannot be empty")
