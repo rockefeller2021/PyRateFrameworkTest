@@ -148,19 +148,57 @@ class PyRateRunner:
         if current_sc['steps']: scenarios.append(current_sc)
         return scenarios
 
+
     def _execute_lines(self, lines, iteration_idx=1):
+        """
+        Execute Gherkin lines with optional descriptive comments.
+        
+        Supports optional descriptions before commands:
+            # This is a description
+            And input '#user' 'admin'
+        
+        The description will be used in evidence generation instead of raw command.
+        Tags (# @smoke) are not captured as descriptions.
+        """
         scenario_log = []
+        pending_description = None  # Store description for next command
+        
         for line in lines:
             line = line.strip()
-            if not line or line.startswith('#') or line.startswith('@'): continue
+            
+            # Skip empty lines
+            if not line:
+                continue
+            
+            # Skip tags (e.g., @smoke, @ui)
+            if line.startswith('@'):
+                continue
+            
+            # Check if line is a comment
+            if line.startswith('#'):
+                # Distinguish between tags and descriptions
+                # Tags: "# @smoke", "# @ui @regression"
+                # Descriptions: "# Navigate to login page"
+                if re.match(r'^#\s*@', line):
+                    # It's a tag comment, skip it
+                    continue
+                else:
+                    # It's a description, capture it
+                    pending_description = line[1:].strip()  # Remove # and whitespace
+                    continue
 
             processed_line = self._inject_vars(line)
             log_step(processed_line)
 
             step_record = {
                 "iteration": iteration_idx,
-                "name": processed_line, "status": "PASS", "error": None,
-                "response_data": None, "screenshot": None, "screenshot_bytes": None
+                "name": pending_description if pending_description else processed_line,  # Use description if available
+                "raw_command": processed_line,  # Keep original command for reference
+                "status": "PASS",
+                "error": None,
+                "response_data": None,
+                "screenshot": None,
+                "screenshot_bytes": None
             }
 
             try:
@@ -188,6 +226,10 @@ class PyRateRunner:
                 break
 
             scenario_log.append(step_record)
+            
+            # Reset pending description after use
+            pending_description = None
+            
         return scenario_log
 
     def _inject_vars(self, line):

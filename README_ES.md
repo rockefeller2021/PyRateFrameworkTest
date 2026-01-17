@@ -331,6 +331,74 @@ Then match text '//div[@class="message"]' == 'Éxito'  # XPath
 
 ---
 
+## 📝 Sintaxis Descriptiva
+
+PyRate soporta **descripciones legibles opcionales** antes de los comandos. Estas descripciones aparecerán en los reportes de evidencias en lugar de la sintaxis Gherkin cruda, haciendo los reportes más fáciles de entender para los stakeholders.
+
+### Uso Básico
+
+Agrega un comentario antes de cualquier comando para describir qué hace:
+
+```gherkin
+# Navego a la página de login de SauceDemo
+Given driver 'https://www.saucedemo.com'
+
+# Ingreso el nombre de usuario estándar
+And input '#user-name' 'standard_user'
+
+# Ingreso la contraseña
+And input '#password' 'secret_sauce'
+
+# Hago clic en el botón de login
+And click '#login-button'
+
+# Verifico login exitoso
+Then match text '.title' == 'Products'
+```
+
+### Salida en Evidencias
+
+**Con Descripciones (v1.1.0+):**
+
+```
+Paso 1: Navego a la página de login de SauceDemo ✅
+Paso 2: Ingreso el nombre de usuario estándar ✅
+Paso 3: Ingreso la contraseña ✅
+Paso 4: Hago clic en el botón de login ✅
+Paso 5: Verifico login exitoso ✅
+```
+
+**Sin Descripciones (backward compatible):**
+
+```
+Paso 1: Given driver 'https://www.saucedemo.com' ✅
+Paso 2: And input '#user-name' 'standard_user' ✅
+...
+```
+
+### Notas Importantes
+
+- **Opcional**: Las descripciones son completamente opcionales
+- **Tags preservados**: Tags como `# @smoke` NO son tratados como descripciones
+- **Backward compatible**: Todos los tests existentes funcionan sin cambios
+- **Flexible**: Mezcla pasos descritos y no descritos libremente
+
+### Ejemplo con Tags
+
+```gherkin
+# @smoke @ui    ← Tag (no es una descripción)
+Scenario: Prueba de login
+
+# Inicio sesión con credenciales válidas    ← Descripción
+Given driver 'https://www.saucedemo.com'
+
+# @checkpoint    ← Tag (se ignora)
+
+And input '#user' 'admin'    ← Sin descripción (usa comando)
+```
+
+---
+
 Ejemplo:
 
 ```bash

@@ -330,6 +330,74 @@ Then match text '//div[@class="message"]' == 'Success'  # XPath
 
 ---
 
+## 📝 Descriptive Syntax
+
+PyRate supports **optional human-readable descriptions** before commands. These descriptions will appear in evidence reports instead of raw Gherkin syntax, making reports easier to understand for stakeholders.
+
+### Basic Usage
+
+Add a comment before any command to describe what it does:
+
+```gherkin
+# Navigate to the SauceDemo login page
+Given driver 'https://www.saucedemo.com'
+
+# Enter the standard username
+And input '#user-name' 'standard_user'
+
+# Enter the password
+And input '#password' 'secret_sauce'
+
+# Click the login button
+And click '#login-button'
+
+# Verify successful login
+Then match text '.title' == 'Products'
+```
+
+### Evidence Output
+
+**With Descriptions (v1.1.0+):**
+
+```
+Step 1: Navigate to the SauceDemo login page ✅
+Step 2: Enter the standard username ✅
+Step 3: Enter the password ✅
+Step 4: Click the login button ✅
+Step 5: Verify successful login ✅
+```
+
+**Without Descriptions (backward compatible):**
+
+```
+Step 1: Given driver 'https://www.saucedemo.com' ✅
+Step 2: And input '#user-name' 'standard_user' ✅
+...
+```
+
+### Important Notes
+
+- **Optional**: Descriptions are completely optional
+- **Tags preserved**: Tags like `# @smoke` are NOT treated as descriptions
+- **Backward compatible**: All existing tests work without changes
+- **Flexible**: Mix described and non-described steps freely
+
+### Example with Tags
+
+```gherkin
+# @smoke @ui    ← Tag (not a description)
+Scenario: Login test
+
+# Log in with valid credentials    ← Description
+Given driver 'https://www.saucedemo.com'
+
+# @checkpoint    ← Tag (ignored)
+
+And input '#user' 'admin'    ← No description (uses command)
+```
+
+---
+
 Example:
 
 ```bash

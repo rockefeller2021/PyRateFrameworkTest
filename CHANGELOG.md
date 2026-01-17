@@ -7,6 +7,87 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.0-beta.1] - 2026-01-17
+
+### Added
+
+- **XPath Selector Support**: UI automation now supports XPath expressions alongside CSS selectors
+  - Auto-detection: XPath expressions starting with `//` or `/` are automatically detected
+  - Explicit prefix: Use `xpath=//your/xpath` for explicit XPath selectors
+  - Backward compatible: All existing CSS selectors continue to work unchanged
+  - Updated commands: `input`, `click`, and `match text` now support both CSS and XPath
+  - New module: `pyrate/selectors.py` with `SelectorStrategy` class
+  - 18 comprehensive unit tests in `tests/test_selectors.py`
+  - Example file: `examples/xpath_selectors.feature`
+  - Documentation: Updated README.md and README_ES.md with XPath examples
+
+### Technical Details
+
+- `SelectorStrategy.parse()` - Automatic selector type detection
+- `SelectorStrategy.validate()` - Selector syntax validation
+- `SelectorStrategy.format_for_playwright()` - Playwright API formatting
+- 100% backward compatibility with v1.0.2
+
+### Examples
+
+```gherkin
+# CSS (existing, works unchanged)
+And input '#username' 'admin'
+
+# XPath with prefix
+And input 'xpath=//input[@id="username"]' 'admin'
+
+# XPath auto-detected
+And input '//input[@id="username"]' 'admin'
+```
+
+---
+
+## [1.1.0-beta.2] - 2026-01-17
+
+### Added
+
+- **Descriptive Gherkin Syntax**: Optional human-readable descriptions before commands for clearer evidence generation
+  - Add comments before commands to describe actions in plain language
+  - Descriptions appear in evidence reports instead of raw Gherkin syntax
+  - Tag comments (`# @smoke`) are NOT captured as descriptions
+  - Backward compatible: All existing tests work without changes
+  - 14 comprehensive unit tests in `tests/test_descriptive_syntax.py`
+  - Example file: `examples/descriptive_syntax.feature`
+  - Documentation: Updated README.md and README_ES.md with syntax examples
+
+### Technical Details
+
+- Modified `_execute_lines()` in `core.py` to capture comment-based descriptions
+- Added `pending_description` variable to track descriptions for next command
+- Added regex filtering to distinguish tags from descriptions
+- Added `raw_command` field to `step_record` for technical reference
+- 100% backward compatibility with v1.0.2
+
+### Examples
+
+```gherkin
+# Navigate to login page    ← Description
+Given driver 'https://www.saucedemo.com'
+
+# Enter username    ← Description
+And input '#user' 'admin'
+
+And click '#login'    ← No description (uses command)
+```
+
+**Evidence Output:**
+
+```
+Step 1: Navigate to login page ✅
+Step 2: Enter username ✅
+Step 3: And click '#login' ✅
+```
+
+---
+
+## [1.1.0-beta.1] - 2026-01-17
+
 ## [1.0.2] - 2026-01-14
 
 ### 🔧 Fixed
