@@ -43,6 +43,8 @@ class PyRateRunner:
         # Playwright instances
         self.playwright_engine = None
         self.browser_engine = None
+        self._main_page = None  # Store main page for iframe context switchings
+
 
         # --- CONTEXTO BASE ---
         self.base_context = {
@@ -451,6 +453,7 @@ class PyRateRunner:
                 )
             context = self.browser_engine.new_context()
             self.context['page'] = context.new_page()
+            self._main_page = self.context['page']  # Store main page reference
             # Use configured browser timeout
             self.context['page'].goto(url, timeout=self.config.browser_timeout)
 
@@ -481,7 +484,7 @@ class PyRateRunner:
             selector_raw = match.group(1).strip("'").strip('"')
             expected_text = match.group(2).strip("'").strip('"')
             
-            # Parse selector (CSS or XPath)
+            # Parse selector (CSS or XPaths)
             selector_type, selector = SelectorStrategy.parse(selector_raw)
             
             if selector_type == SelectorType.XPATH:
@@ -491,5 +494,187 @@ class PyRateRunner:
             
             if expected_text not in act:
                 raise AssertionError(f"Texto no coincide. Esperado: '{expected_text}' en '{act}'")
+
+        # ========================================
+        # SCROLL COMMANDS (Sprint 3)
+        # ========================================
+        elif 'scroll to' in line.lower():
+            if match := re.match(r'(?:Given|And)\s+scroll to element\s+(.*)', line, re.IGNORECASE):
+                selector_raw = match.group(1).strip("'").strip('"')
+                selector_type, selector = SelectorStrategy.parse(selector_raw)
+                
+                if selector_type == SelectorType.XPATH:
+                    self.context['page'].locator(f"xpath={selector}").scroll_into_view_if_needed()
+                else:
+                    self.context['page'].locator(selector).scroll_into_view_if_needed()
+                    
+            elif 'scroll to top' in line.lower():
+                self.context['page'].evaluate("window.scrollTo(0, 0)")
+                
+            elif 'scroll to bottom' in line.lower():
+                self.context['page'].evaluate("window.scrollTo(0, document.body.scrollHeight)")
+                
+            elif match := re.match(r'(?:Given|And)\s+scroll to\s+(\d+)\s*,\s*(\d+)', line, re.IGNORECASE):
+                x = int(match.group(1))
+                y = int(match.group(2))
+                self.context['page'].evaluate(f"window.scrollTo({x}, {y})")
+
+        # ========================================
+        # DROPDOWN/SELECT COMMANDS (Sprint 3)
+        # ========================================
+        elif match := re.match(r'(?:Given|And)\s+select\s+(.*)\s+by text\s+(.*)', line, re.IGNORECASE):
+            selector_raw = match.group(1).strip("'").strip('"')
+            text = match.group(2).strip("'").strip('"')
+            selector_type, selector = SelectorStrategy.parse(selector_raw)
+            
+            if selector_type == SelectorType.XPATH:
+                self.context['page'].locator(f"xpath={selector}").select_option(label=text)
+            else:
+                self.context['page'].select_option(selector, label=text)
+                
+        elif match := re.match(r'(?:Given|And)\s+select\s+(.*)\s+by value\s+(.*)', line, re.IGNORECASE):
+            selector_raw = match.group(1).strip("'").strip('"')
+            value = match.group(2).strip("'").strip('"')
+            selector_type, selector = SelectorStrategy.parse(selector_raw)
+            
+            if selector_type == SelectorType.XPATH:
+                self.context['page'].locator(f"xpath={selector}").select_option(value=value)
+            else:
+                self.context['page'].select_option(selector, value=value)
+                
+        elif match := re.match(r'(?:Given|And)\s+select\s+(.*)\s+by index\s+(\d+)', line, re.IGNORECASE):
+            selector_raw = match.group(1).strip("'").strip('"')
+            index = int(match.group(2))
+            selector_type, selector = SelectorStrategy.parse(selector_raw)
+            
+            if selector_type == SelectorType.XPATH:
+                self.context['page'].locator(f"xpath={selector}").select_option(index=index)
+            else:
+                self.context['page'].select_option(selector, index=index)
+
+        # ========================================
+        # CHECKBOX COMMANDS (Sprint 3)
+        # ========================================
+        elif match := re.match(r'(?:Given|And)\s+check\s+(.*)', line, re.IGNORECASE):
+            if 'radio' not in line.lower():  # Avoid conflict with radio buttons
+                selector_raw = match.group(1).strip("'").strip('"')
+                selector_type, selector = SelectorStrategy.parse(selector_raw)
+                
+                if selector_type == SelectorType.XPATH:
+                    self.context['page'].locator(f"xpath={selector}").check()
+                else:
+                    self.context['page'].locator(selector).check()
+                    
+        elif match := re.match(r'(?:Given|And)\s+uncheck\s+(.*)', line, re.IGNORECASE):
+            selector_raw = match.group(1).strip("'").strip('"')
+            selector_type, selector = SelectorStrategy.parse(selector_raw)
+            
+            if selector_type == SelectorType.XPATH:
+                self.context['page'].locator(f"xpath={selector}").uncheck()
+            else:
+                self.context['page'].locator(selector).uncheck()
+                
+        elif match := re.match(r'(?:Given|And)\s+toggle\s+(.*)', line, re.IGNORECASE):
+            selector_raw = match.group(1).strip("'").strip('"')
+            selector_type, selector = SelectorStrategy.parse(selector_raw)
+            
+            if selector_type == SelectorType.XPATH:
+                checkbox = self.context['page'].locator(f"xpath={selector}")
+            else:
+                checkbox = self.context['page'].locator(selector)
+                
+            # Toggle logic
+            if checkbox.is_checked():
+                checkbox.uncheck()
+            else:
+                checkbox.check()
+
+        # ========================================
+        # RADIO BUTTON COMMANDS (Sprint 3)
+        # ========================================
+        elif match := re.match(r'(?:Given|And)\s+check radio\s+(.*)', line, re.IGNORECASE):
+            selector_raw = match.group(1).strip("'").strip('"')
+            selector_type, selector = SelectorStrategy.parse(selector_raw)
+            
+            if selector_type == SelectorType.XPATH:
+                self.context['page'].locator(f"xpath={selector}").check()
+            else:
+                self.context['page'].locator(selector).check()
+
+        # ========================================
+        # IFRAME COMMANDS (Sprint 3)
+        # ========================================
+        elif match := re.match(r'(?:Given|And)\s+switch to frame\s+(.*)', line, re.IGNORECASE):
+            selector_raw = match.group(1).strip("'").strip('"')
+            
+            # Check if it's an index (number)
+            if selector_raw.isdigit():
+                frame_index = int(selector_raw)
+                frames = self.context['page'].frames
+                if frame_index < len(frames):
+                    self.context['page'] = frames[frame_index]
+                else:
+                    raise ValueError(f"Frame index {frame_index} out of range")
+            else:
+                # Selector-based frame switching
+                selector_type, selector = SelectorStrategy.parse(selector_raw)
+                
+                if selector_type == SelectorType.XPATH:
+                    frame_locator = self.context['page'].frame_locator(f"xpath={selector}")
+                else:
+                    frame_locator = self.context['page'].frame_locator(selector)
+                    
+                # Note: Playwright's frame_locator returns a FrameLocator for chaining
+                # Store it as the current page context
+                self.context['page'] = frame_locator
+                
+        elif 'switch to default' in line.lower() or 'switch to main' in line.lower():
+            # Return to main page context
+            if self._main_page:
+                self.context['page'] = self._main_page
+                
+        elif 'switch to parent' in line.lower():
+            # Return to parent frame (simplified: return to main)
+            if self._main_page:
+                self.context['page'] = self._main_page
+
+        # ========================================
+        # POPUP/ALERT COMMANDS (Sprint 3)
+        # ========================================
+        elif 'accept alert' in line.lower():
+            def handle_dialog(dialog):
+                dialog.accept()
+            self.context['page'].on("dialog", handle_dialog)
+            
+        elif 'dismiss alert' in line.lower():
+            def handle_dialog(dialog):
+                dialog.dismiss()
+            self.context['page'].on("dialog", handle_dialog)
+            
+        elif match := re.match(r'(?:Then|And)\s+match alert text\s+==\s+(.*)', line, re.IGNORECASE):
+            expected_text = match.group(1).strip("'").strip('"')
+            captured_text = None
+            
+            def handle_dialog(dialog):
+                nonlocal captured_text
+                captured_text = dialog.message
+                dialog.accept()
+                
+            self.context['page'].on("dialog", handle_dialog)
+            
+            time.sleep(0.5)  # Wait for dialog to appear
+            
+            if captured_text != expected_text:
+                raise AssertionError(
+                    f"Alert text mismatch. Expected: '{expected_text}', Got: '{captured_text}'"
+                )
+                
+        elif match := re.match(r'(?:Given|And)\s+type in prompt\s+(.*)', line, re.IGNORECASE):
+            prompt_text = match.group(1).strip("'").strip('"')
+            
+            def handle_dialog(dialog):
+                dialog.accept(prompt_text)
+                
+            self.context['page'].on("dialog", handle_dialog)
         else:
             raise StepExecutionError(line, "Comando desconocido")

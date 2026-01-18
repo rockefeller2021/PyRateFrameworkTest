@@ -7,6 +7,87 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.0-beta.3] - 2026-01-17
+
+### Added
+
+- **Scroll Commands**: Complete scroll functionality for UI automation
+  - `scroll to element` - Scroll to specific element (CSS or XPath)
+  - `scroll to top` - Scroll to top of page
+  - `scroll to bottom` - Scroll to bottom of page
+  - `scroll to X, Y` - Scroll to specific coordinates
+- **Dropdown/Select Commands**: Three methods for dropdown selection
+  - `select SELECTOR by text TEXT` - Select by visible text
+  - `select SELECTOR by value VALUE` - Select by value attribute
+  - `select SELECTOR by index INDEX` - Select by zero-based index
+- **Checkbox Commands**: Complete checkbox control
+  - `check SELECTOR` - Check a checkbox
+  - `uncheck SELECTOR` - Uncheck a checkbox
+  - `toggle SELECTOR` - Toggle checkbox state
+- **Radio Button Commands**: Radio button selection
+  - `check radio SELECTOR` - Select a radio button
+- **Iframe Commands**: Navigate between iframes and main page
+  - `switch to frame SELECTOR` - Switch to iframe by selector or index
+  - `switch to default content` / `switch to main` - Return to main page
+  - `switch to parent` - Return to parent frame
+  - Added `_main_page` attribute to store main page reference
+- **Popup/Alert Commands**: Handle JavaScript dialogs
+  - `accept alert` - Accept alert/confirm dialog
+  - `dismiss alert` - Dismiss alert/confirm dialog
+  - `match alert text == TEXT` - Validate alert message
+  - `type in prompt TEXT` - Type text in prompt dialog
+
+### Technical Details
+
+- **Total New Commands**: 26 new Gherkin commands
+- **Lines Added**: 187 lines of production code in `core.py`
+- **XPath Support**: All new commands support both CSS and XPath selectors
+- **File Changes**: Modified `pyrate/core.py` (lines 46, 454, 494-678)
+- **Test Coverage**: 25 integration tests across 6 test files
+- **Backward Compatibility**: 100% compatible with v1.1.0-beta.2
+
+### Examples
+
+```gherkin
+# Scroll commands
+And scroll to element '#footer'
+And scroll to top
+And scroll to 500, 1000
+
+# Dropdown selection
+And select '#country' by text 'United States'
+And select '#country' by value 'US'
+And select '#country' by index 0
+
+# Checkbox operations
+And check '#terms'
+And uncheck '#newsletter'
+And toggle '#remember-me'
+
+# Radio buttons
+And check radio '#gender-male'
+
+# Iframes
+And switch to frame '#payment-iframe'
+And switch to default content
+
+# Alerts
+And accept alert
+Then match alert text == 'Are you sure?'
+And type in prompt 'John Doe'
+```
+
+### Testing
+
+- `tests/test_scroll.py` - 5 scroll tests
+- `tests/test_dropdowns.py` - 4 dropdown tests
+- `tests/test_checkboxes.py` - 4 checkbox tests
+- `tests/test_radio.py` - 3 radio button tests
+- `tests/test_iframes.py` - 4 iframe tests
+- `tests/test_alerts.py` - 5 alert/popup tests
+
+---
+
 ## [1.1.0-beta.1] - 2026-01-17
 
 ### Added
