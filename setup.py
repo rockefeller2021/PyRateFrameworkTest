@@ -9,8 +9,8 @@ except FileNotFoundError:
     long_description = "PyRate Framework - Automation testing for API and UI inspired by Karate"
 
 setup(
-    name="pyrate-framework",  # Unique name for PyPI
-    version="1.0.2",
+    name="pyrate-framework",  # Unique name for PyPIs
+    version="1.1.0b4",  # Beta 4 - pkg_resources fix,
     author="Rafael Enrique Alvarado García",  # TODO: Replace with actual author name
     author_email="magomlg@gmail.com",  # TODO: Replace with actual email
     description="Automation testing framework for API and UI inspired by Karate Framework",
@@ -26,19 +26,19 @@ setup(
     classifiers=[
         # Development status
         "Development Status :: 4 - Beta",
-        
+
         # Intended audience
         "Intended Audience :: Developers",
         "Intended Audience :: Information Technology",
-        
+
         # Topic
         "Topic :: Software Development :: Testing",
         "Topic :: Software Development :: Quality Assurance",
         "Topic :: Software Development :: Libraries :: Python Modules",
-        
+
         # License
         "License :: OSI Approved :: MIT License",
-        
+
         # Python versions
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.8",
@@ -46,10 +46,10 @@ setup(
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
-        
+
         # OS
         "Operating System :: OS Independent",
-        
+
         # Framework
         "Framework :: Pytest",
     ],

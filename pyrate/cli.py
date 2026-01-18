@@ -9,7 +9,7 @@ from .config_loader import ConfigLoader
 def init_project():
     """Initialize a new PyRate project with folder structure and examples"""
     import shutil
-    import pkg_resources
+    from pathlib import Path
 
     folders = ["tests/features", "tests/data", "reports", "evidence"]
     for f in folders:
@@ -23,9 +23,13 @@ def init_project():
     with open("tests/features/demo.feature", "w") as f:
         f.write("# @smoke\nGiven url '#(BASE_URL)'\nAnd path 'users/1'\nWhen method get\nThen status 200\n")
 
-    # Copy examples files from package
+    # Copy example files from package
     try:
-        examples_dir = pkg_resources.resource_filename('pyrate', '../examples')
+        # Get the package directory (where pyrate module is installed)
+        import pyrate
+        package_dir = Path(pyrate.__file__).parent.parent
+        examples_dir = package_dir / "examples"
+
         example_files = [
             'ui_interactions_complete.feature',
             'form_complete.feature',
@@ -35,9 +39,9 @@ def init_project():
         ]
 
         for example_file in example_files:
-            src = os.path.join(examples_dir, example_file)
-            if os.path.exists(src):
-                dst = os.path.join("tests/features", example_file)
+            src = examples_dir / example_file
+            if src.exists():
+                dst = Path("tests/features") / example_file
                 shutil.copy(src, dst)
                 log_info(f"  ✓ Copiado: {example_file}")
     except Exception as e:
